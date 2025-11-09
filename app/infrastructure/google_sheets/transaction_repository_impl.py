@@ -13,9 +13,7 @@ class TransactionRepositoryImpl(TransactionRepository):
     """
 
     def __init__(self):
-        creds = Credentials.from_service_account_file(
-            Config.GOOGLE_CREDENTIAL, scopes=Config.SCOPES
-        )
+        creds = Config.get_google_credentials()
         client = gspread.authorize(creds)
         self.sheet = client.open(Config.SHEET_NAME).worksheet(Config.SHEET_TAB)
 

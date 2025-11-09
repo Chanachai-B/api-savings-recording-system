@@ -9,7 +9,6 @@ class TransactionController:
         
     def list_transactions(self) -> List[TransactionResponse]:
         records = self.repo.get_all()
-        print("records", records)
         return [TransactionResponse(**r) for r in records]
 
     def deposit(self, req: TransactionRequest) -> TransactionResponse:
@@ -19,7 +18,6 @@ class TransactionController:
             raise ValueError("จำนวนเงินฝากต้องมากกว่า 0 บาท")
 
         result = self.repo.add(transaction)
-        print("result", result)
         return TransactionResponse(**result)
     
     def withdraw(self, req: TransactionRequest) -> TransactionResponse:
@@ -29,5 +27,4 @@ class TransactionController:
             raise ValueError("จำนวนเงินถอนต้องมากกว่า 0 บาท")
 
         result = self.repo.add(transaction)
-        print("result", result)
         return TransactionResponse(**result)

@@ -1,13 +1,27 @@
 import os
+import json
 from dotenv import load_dotenv
+from google.oauth2.service_account import Credentials
+import gspread
 
 load_dotenv()
 
 class Config:
-    GOOGLE_CREDENTIAL = os.getenv("GOOGLE_CREDENTIAL", "service_account.json")
     SHEET_NAME = os.getenv("SHEET_NAME", "ชีตไม่ระบุชื่อ")
     SHEET_TAB = os.getenv("SHEET_TAB", "ชีต1")
     SCOPES = [
         "https://www.googleapis.com/auth/spreadsheets",
         "https://www.googleapis.com/auth/drive"
     ]
+
+    @classmethod
+    def get_google_credentials(self):
+        creds_dict = json.loads(os.getenv("GOOGLE_CREDENTIAL"))
+        print(creds_dict)
+        return Credentials.from_service_account_info(creds_dict, scopes=self.SCOPES)
+    
+if __name__ == "__main__":
+    creds = Config.get_google_credentials()
+    client = gspread.authorize(creds)
+    sheet = client.open(Config.SHEET_NAME).worksheet(Config.SHEET_TAB)
+    print(sheet.get_all_values())
