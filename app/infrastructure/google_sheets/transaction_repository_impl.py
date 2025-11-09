@@ -30,7 +30,7 @@ class TransactionRepositoryImpl(TransactionRepository):
     def _get_last_transaction_for_student(self, student_id: str) -> Dict[str, Any]:
         """ดึงธุรกรรมล่าสุดของนักเรียน"""
         records = self.sheet.get_all_records()
-        student_records = [r for r in records if r.get("student_id") == student_id]
+        student_records = [r for r in records if str(r.get("student_id")) == student_id]
         return student_records[-1] if student_records else {}
 
     def _create_base_transaction(self, transaction: Transaction) -> Dict[str, Any]:
@@ -65,7 +65,7 @@ class TransactionRepositoryImpl(TransactionRepository):
         new_tx = self._create_base_transaction(transaction)
         withdraw_amount = float(transaction.amount)
         last_balance = float(last_record.get("balance", 0) or 0.0)
-
+        
         if withdraw_amount > last_balance:
             raise ValueError("ยอดคงเหลือไม่เพียงพอสำหรับการถอน")
 
@@ -81,7 +81,7 @@ class TransactionRepositoryImpl(TransactionRepository):
 
     def add(self, transaction: Transaction) -> Dict[str, Any]:
         """เพิ่มข้อมูลธุรกรรมลงใน Google Sheet"""
-        last_record = self._get_last_transaction_for_student(transaction.student_id)
+        last_record = self._get_last_transaction_for_student(str(transaction.student_id))
 
         match transaction.transaction_type:
             case "deposit":
