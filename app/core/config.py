@@ -8,7 +8,8 @@ load_dotenv()
 class Config:
     API_ALLOW_ORIGINS = os.getenv("API_ALLOW_ORIGINS")
     SHEET_NAME = os.getenv("SHEET_NAME", "ชีตไม่ระบุชื่อ")
-    SHEET_TAB = os.getenv("SHEET_TAB", "ชีต1")
+    SHEET_TAB_STUDENT = os.getenv("SHEET_TAB_STUDENT", "ชีต1")
+    SHEET_TAB_TRANSACTION = os.getenv("SHEET_TAB_TRANSACTION", "ชีต2")
     SCOPES = [
         "https://www.googleapis.com/auth/spreadsheets",
         "https://www.googleapis.com/auth/drive"

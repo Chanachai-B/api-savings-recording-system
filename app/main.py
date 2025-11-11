@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.routes import transaction_routes
+from app.api.routes import student_routes, transaction_routes
 from app.core.config import Config
 
 app = FastAPI(title="School Savings API", version="1.0")
@@ -14,6 +14,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(student_routes.router, prefix="/student", tags=["student"])
 app.include_router(transaction_routes.router, prefix="/transactions", tags=["Transactions"])
 
 @app.get("/", include_in_schema=False)

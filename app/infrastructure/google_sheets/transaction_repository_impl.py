@@ -15,7 +15,7 @@ class TransactionRepositoryImpl(TransactionRepository):
     def __init__(self):
         creds = Config.get_google_credentials()
         client = gspread.authorize(creds)
-        self.sheet = client.open(Config.SHEET_NAME).worksheet(Config.SHEET_TAB)
+        self.sheet = client.open(Config.SHEET_NAME).worksheet(Config.SHEET_TAB_TRANSACTION)
 
     # ---------------------------------------------------------
     # Internal Helpers

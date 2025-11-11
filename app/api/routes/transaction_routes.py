@@ -6,7 +6,7 @@ from typing import List
 
 router = APIRouter()
 
-@router.get("/", response_model=List[TransactionResponse])
+@router.get("/all", response_model=List[TransactionResponse])
 def list_transactions(
     controller: TransactionController = Depends(get_transaction_controller)
 ):
