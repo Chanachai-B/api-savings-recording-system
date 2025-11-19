@@ -5,7 +5,7 @@ from app.core.utils import to_decimal_str
 from app.domain.interfaces.student_repository import StudentRepository
 import polars as pl
 
-from app.schemas.student_schema import Student
+from app.schemas.student_schema import Student, UpdateBalanceRequest
 
 class StudentRepositoryImpl(StudentRepository):
     """
@@ -39,7 +39,7 @@ class StudentRepositoryImpl(StudentRepository):
         student_result = df_student_data.to_dicts()
         return student_result[0] if student_result.__len__() > 0 else None
     
-    def get_row_data_student_in_db(self, student_id: str, records: list[Student]):
+    def get_row_data_student_in_db(self, student_id: str, records: list[UpdateBalanceRequest]):
         df_records = pl.DataFrame(records)
         try:
             idx = df_records.select(
@@ -53,28 +53,29 @@ class StudentRepositoryImpl(StudentRepository):
         # records = self.sheet.get_all_records()
         pass
         
-    def calculate_balance(self, student_id: str, amount: int, transaction_type: Literal["deposit", "withdraw"], records: list[Student], idx: int):
+    def calculate_balance(self, student_id: str, amount: int, transaction_type: Literal["deposit", "withdraw"], records: list[UpdateBalanceRequest], idx: int):
         df_records = pl.DataFrame(records)
         df_student_data = df_records.filter(pl.col("student_id") == student_id)
         student_data = df_student_data.to_dicts()[0] if df_student_data.to_dicts().__len__() > 0 else None
         
         sheet_row = idx + 2
-        columns = list(student_data.keys())
-        col_balance = columns.index("balance") + 1
-        col_total_deposit = columns.index("total_deposit") + 1 if transaction_type == "deposit" else None
-        col_total_withdrawal = columns.index("total_withdrawal") + 1 if transaction_type == "withdraw" else None
+        keys = Student.model_fields.keys()
+        keys_list = list(keys)
+        col_balance = keys_list.index("balance") + 1
+        col_total_deposit = keys_list.index("total_deposit") + 1 if transaction_type == "deposit" else None
+        col_total_withdrawal = keys_list.index("total_withdrawal") + 1 if transaction_type == "withdraw" else None
 
         if student_data and transaction_type == "deposit":
-            last_deposit = int(student_data.get("total_deposit"), 0)
-            balance = int(student_data.get("balance"), 0)
+            last_deposit = float(student_data.get("total_deposit", 0.00))
+            balance = float(student_data.get("balance", 0.00))
             total_balance = balance + amount
             total_deposit = last_deposit + amount
             student_data["balance"] = to_decimal_str(total_balance)
             student_data["total_deposit"] = to_decimal_str(total_deposit)
             self.sheet.update_cell(sheet_row, col_total_deposit, student_data["total_deposit"])
         elif student_data and transaction_type == "withdraw":
-            last_withdrawal = int(student_data.get("total_withdrawal"), 0)
-            balance = int(student_data.get("balance"), 0)
+            last_withdrawal = float(student_data.get("total_withdrawal", 0.00))
+            balance = float(student_data.get("balance", 0.00))
             total_balance = balance - amount
             total_withdrawal = last_withdrawal + amount
             student_data["balance"] = to_decimal_str(total_balance)

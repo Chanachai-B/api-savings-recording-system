@@ -8,18 +8,6 @@ class StudentRequest(BaseModel):
     # note: str
     pass
 
-class StudentResponse(BaseModel):
-    academic_year: str
-    classroom: str
-    number: str
-    student_id: str
-    prefix: str
-    first_name: str
-    last_name: str
-    total_deposit: str
-    total_withdrawal: str
-    balance: str
-    
 class Student(BaseModel):
     academic_year: str
     classroom: str
@@ -31,4 +19,14 @@ class Student(BaseModel):
     total_deposit: str
     total_withdrawal: str
     balance: str
+class StudentResponse(Student):
+    pass
 
+class UpdateBalanceRequest(BaseModel):
+    student_id: str
+    total_deposit: str
+    total_withdrawal: str
+    balance: str
+    
+class UpdateBalanceResponse(UpdateBalanceRequest):
+    pass

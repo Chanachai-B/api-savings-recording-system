@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends
 
 from app.api.dependencies import get_student_controller
 from app.controllers.student_controller import StudentController
-from app.schemas.student_schema import StudentResponse
+from app.schemas.student_schema import StudentResponse, UpdateBalanceRequest, UpdateBalanceResponse
 
 
 router = APIRouter()
@@ -28,12 +28,13 @@ def get_row_student(
 ):
     return controller.get_row_data_student_in_db(student_id)
 
-@router.put("/{student_id}/update_balance", response_model=StudentResponse)
+@router.put("/{student_id}/update_balance", response_model=UpdateBalanceResponse)
 def update_balance(
     student_id: str,
     amount: int,
     transaction_type: Literal["deposit", "withdraw"],
+    records: list[UpdateBalanceRequest],
     controller: StudentController = Depends(get_student_controller)
 ):
-    return controller.update_balance_student(student_id, amount, transaction_type)
+    return controller.update_balance_student(student_id, amount, transaction_type, records)
 
