@@ -1,6 +1,6 @@
 from typing import List, Literal
 from app.domain.interfaces.student_repository import StudentRepository
-from app.schemas.student_schema import StudentResponse
+from app.schemas.student_schema import StudentResponse, UpdateBalanceRequest
 
 class StudentController:
     def __init__(self, repo: StudentRepository):
@@ -20,8 +20,7 @@ class StudentController:
         idx = self.repo.get_row_data_student_in_db(student_id, records)
         return idx
     
-    def update_balance_student(self, student_id: str, amount: int, transaction_type: Literal["deposit", "withdraw"]):
-        records = self.repo.get_all()
+    def update_balance_student(self, student_id: str, amount: int, transaction_type: Literal["deposit", "withdraw"], records: list[UpdateBalanceRequest]):
         idx = self.repo.get_row_data_student_in_db(student_id, records)
         result = self.repo.calculate_balance(student_id, amount, transaction_type, records, idx)
         return result
